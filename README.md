@@ -48,6 +48,25 @@ omarchy pkg add fcitx5 pkgconf base-devel
 The picker is intentionally disabled in password fields. Mouse selection also
 works, but the complete flow is keyboard navigable.
 
+### Terminal emulators
+
+The picker is typically unwanted in terminal emulators, where `:w`, `:q`, and
+similar strings are shell commands or editor actions. By default Quick Emoji
+is **disabled** in these terminals (Alacritty, kitty, foot, Ghostty, WezTerm,
+GNOME Terminal, Konsole, xterm) — this also covers anything running inside
+them, such as zsh, tmux, helix, or vim.
+
+To temporarily allow emoji completion in terminals, toggle it on:
+
+```sh
+bash ~/.config/omarchy/plugins/io.github.joshferrara.quick-emoji/scripts/manage.sh toggle-terminals
+```
+
+Running the same command again turns it back off. The toggle is instant (the
+addon checks a flag file on every keystroke) and persists across Fcitx5
+restarts. When enabled, terminal emulators behave like any other app; password
+fields remain blocked regardless.
+
 Search covers 1,870 Unicode emoji and 1,913 aliases from
 [GitHub's gemoji](https://github.com/github/gemoji), plus descriptions and
 keyword tags. Ranking favors exact aliases, then prefixes, contained terms,

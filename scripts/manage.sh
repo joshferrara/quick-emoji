@@ -275,7 +275,7 @@ case "$action" in
     cp "$source_dir/fcitx/highlight.svg.in" "$share_dir/highlight.svg.in"
     cp "$source_dir/fcitx/quickemoji.conf" "$addon_config"
 
-    build_key=$(sha256sum "$source_dir/src/quickemoji.cpp" | cut -d' ' -f1)-$(pkg-config --modversion Fcitx5Core)
+    build_key=$(cat "$source_dir/src/quickemoji.cpp" "$source_dir/src/terminalpolicy.h" | sha256sum | cut -d' ' -f1)-$(pkg-config --modversion Fcitx5Core)
     old_build_key=$(cat "$cache_dir/build-key" 2>/dev/null || true)
     if [[ $build_key != "$old_build_key" || ! -f $cache_dir/quickemoji.so ]]; then
       read -r -a compile_flags <<<"$(pkg-config --cflags Fcitx5Core)"
@@ -330,6 +330,18 @@ case "$action" in
     fi
     ;;
 
+  toggle-terminals)
+    flag="$state_dir/terminals-enabled"
+    if [[ -f "$flag" ]]; then
+      rm -f "$flag"
+      printf 'Emoji picker disabled in terminals\n'
+    else
+      mkdir -p "$state_dir"
+      touch "$flag"
+      printf 'Emoji picker enabled in terminals\n'
+    fi
+    ;;
+
   cleanup)
     source_dir=$(cat "$state_dir/source-dir" 2>/dev/null || true)
     if [[ -z $source_dir || ! -f $source_dir/manifest.json ]]; then
@@ -338,7 +350,7 @@ case "$action" in
     ;;
 
   *)
-    printf 'Usage: %s {install|theme|deactivate|deactivate-if-disabled|cleanup}\n' "$0" >&2
+    printf 'Usage: %s {install|theme|deactivate|deactivate-if-disabled|toggle-terminals|cleanup}\n' "$0" >&2
     exit 2
     ;;
 esac

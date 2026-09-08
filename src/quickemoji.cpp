@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#include "terminalpolicy.h"
+
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
@@ -318,8 +320,11 @@ private:
 
     bool unavailable(InputContext *inputContext) const {
         const auto capabilities = inputContext->capabilityFlags();
-        return capabilities.test(CapabilityFlag::Password) ||
-               capabilities.test(CapabilityFlag::Disable) || emojis_.empty();
+        if (capabilities.test(CapabilityFlag::Password) ||
+            capabilities.test(CapabilityFlag::Disable) || emojis_.empty()) {
+            return true;
+        }
+        return quickemoji::terminalBlocked(inputContext->program());
     }
 
     static bool hasCommandModifier(const Key &key) {
